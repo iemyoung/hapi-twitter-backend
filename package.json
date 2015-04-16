@@ -1,0 +1,27 @@
+{
+  "name": "hapi-twitter",
+  "version": "1.0.0",
+  "description": "hapi-twitter-backend",
+  "main": "index.js",
+  "dependencies": {
+    "bcrypt": "^0.8.2",
+    "hapi": "^8.4.0",
+    "hapi-mongodb": "^3.0.0",
+    "joi": "^6.1.2",
+    "yar": "^3.0.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yhyoungyang/hapi-twitter-backend.git"
+  },
+  "author": "yang",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/yhyoungyang/hapi-twitter-backend/issues"
+  },
+  "homepage": "https://github.com/yhyoungyang/hapi-twitter-backend"
+}
