@@ -15,7 +15,6 @@ exports.register = function(server, options, next) {
           if (err) {
             return reply('Internal MongoDB error', err);
           }
-
           reply(users);
         });
       }
@@ -39,18 +38,21 @@ exports.register = function(server, options, next) {
                   { email: newUser.email }
               ]};
 
+              console.log('before users');
               db.collection('users').count(uniqUserQuery, function(err, userExist) {
                 // if user already exists
                 if (userExist) {
                   return reply('Error: Username already exist', err);
                 }
 
+                  console.log('before writeResult');
                 // otherwise, create the user
                 db.collection('users').insert(newUser, function(err, writeResult) {
                   if (err) {
                     return reply('Internal MongoDB error', err);
                   }
 
+                  console.log(writeResult);
                   reply(writeResult);
                 });
               });            
@@ -59,13 +61,28 @@ exports.register = function(server, options, next) {
         },
         validate: {
           payload: {
-            user: {
+            user: { 
               username: Joi.string().min(3).max(20).required(),
               email: Joi.string().email().max(50).required(),
               password: Joi.string().min(5).max(20).required()
             }
           }
         }
+      }
+    }, 
+    {
+      method: 'GET',
+      path: '/users/{username}',
+      handler: function(request, reply) {
+  
+        var username = encodeURIComponent(request.params.username);
+        var db = request.server.plugins['hapi-mongodb'].db;
+
+        db.collection('users').findOne({ "username": username }, function(err, user) {
+          if (err) { return reply('Internal MongoDB error', err); }
+
+          reply(user);
+        });
       }
     }
   ]);

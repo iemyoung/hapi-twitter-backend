@@ -1,6 +1,7 @@
 var Bcrypt = require('bcrypt');
+var Auth = require('./auth');
 
-exports.register =  function(server, options, next){
+exports.register =  function(server, options, next) {
   server.route([
     {
       //Creating a session / logging in 
@@ -45,8 +46,6 @@ exports.register =  function(server, options, next){
               reply ({"message": "Not authorized"});
             }
           });
-
-
         });
       }
     },
@@ -54,14 +53,32 @@ exports.register =  function(server, options, next){
       method:'GET',
       path:'/authenticated',
       handler: function(request, reply) {
+        Auth.authenticated(request, function(result) {
+          reply(result);
+        });
+      }
+    },
+    {
+      //logging out
+      method: 'DELETE',
+      path: '/sessions',
+      handler: function(request,reply){
+        //obtain the session
         var session = request.session.get('hapi_twitter_session');
-        var db= request.server.plugins['hapi-mongo'].db;
-        db.collection('sessions').findOne({"session_id": session.session_key }, function(err, result) {
-          if (result === null) {
-            return reply ({'message': "Unauthenticated"});
-          } else {
-            return reply({ 'message': "Authenticated"})
-          }
+
+        //initial db
+        var db= request.server.plugins['hapi-mongodb'].db;
+
+        if (!session) {
+          return reply ({ "message": "Already logged out"});
+          // return will terminate the rest of the program
+        }
+
+        //search for the same session in the db
+        //remove that session in the db
+        db.collection('sessions').remove({ "session_id": session.session_key }, function(err, writeResult) {
+          if (err) { return reply('Internal MongoDB error', err); }
+          reply(writeResult);
         });
       }
     }

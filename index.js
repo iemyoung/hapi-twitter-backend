@@ -4,7 +4,12 @@ var server = new Hapi.Server();
 server.connection({
 	host:'0.0.0.0',
 	port: process.env.PORT || 3000, //process.env.PORT: It's an environment variable prepared by Heroku Deployment. 
-	routes: {cors: true}, // other domains can access my domain 
+	routes: {
+    cors: {
+      headers: ['Access-Control-Allow-Credentials'],
+      credentials: true
+    }
+  } // other domains can access my domain 
 });
 
 //This is where you include all your dependencies
@@ -14,10 +19,10 @@ var plugins = [
   {
     register: require('hapi-mongodb'),
     options: {
-      "url": "mongodb://127.0.0.1:27017/hapi-twitter",
-      "settings": {
-        "db": {
-          "native_parser": false
+      url: "mongodb://127.0.0.1:27017/hapi-twitter",
+      settings: {
+        db: {
+          native_parser: false
         }
       }
     }
